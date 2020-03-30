@@ -75,6 +75,7 @@ class TextCNN(object):
         self.h_pool_flat = tf.reshape(self.h_pool, [-1, num_filters_total])
 
         # Add dropout
+        # https://www.jianshu.com/p/635d95b34e14
         with tf.name_scope("dropout"):
             self.h_drop = tf.nn.dropout(self.h_pool_flat, self.dropout_keep_prob)
 

@@ -10,6 +10,10 @@ from text_cnn import TextCNN
 from tensorflow.contrib import learn
 import csv
 
+# https://blog.csdn.net/sinat_36618660/article/details/98665482
+# https://blog.csdn.net/sinat_34474705/article/details/78995196
+# https://blog.csdn.net/sinat_29957455/article/details/78511119
+
 # Parameters
 # ==================================================
 
@@ -33,7 +37,6 @@ print("\nParameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
-
 
 
 def load_data(w2v_model,max_document_length = 1290):
@@ -99,7 +102,6 @@ def eval(w2v_model):
     print("Saving evaluation to {0}".format(out_path))
     with open(out_path, 'w') as f:
         csv.writer(f).writerows(predictions_human_readable)
-
 
 
 if __name__ == "__main__":

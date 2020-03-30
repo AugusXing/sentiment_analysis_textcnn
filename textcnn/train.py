@@ -94,6 +94,7 @@ def train(w2v_model):
           allow_soft_placement=FLAGS.allow_soft_placement,
           log_device_placement=FLAGS.log_device_placement)
         sess = tf.Session(config=session_conf)
+        # https://blog.csdn.net/Enchanted_ZhouH/article/details/77571939
         with sess.as_default():
             cnn = TextCNN(
                 w2v_model,
@@ -106,12 +107,17 @@ def train(w2v_model):
                 l2_reg_lambda=FLAGS.l2_reg_lambda)
 
             # Define Training procedure
+            # https://blog.csdn.net/MrR1ght/article/details/81228087
             global_step = tf.Variable(0, name="global_step", trainable=False)
             optimizer = tf.train.AdamOptimizer(1e-3)
+            # https://blog.csdn.net/sinat_37386947/article/details/88849519?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task
+            # https://www.cnblogs.com/marsggbo/p/10056057.html
             grads_and_vars = optimizer.compute_gradients(cnn.loss)
             train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
             # Keep track of gradient values and sparsity (optional)
+            # https://blog.csdn.net/qq_37995260/article/details/100166613
+            # https://www.cnblogs.com/lyc-seu/p/8647792.html
             grad_summaries = []
             for g, v in grads_and_vars:
                 if g is not None:

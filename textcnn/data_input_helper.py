@@ -66,7 +66,6 @@ def read_file_lines(filename,from_size,line_num):
     return text
 
 
-
 def load_data_and_labels(filepath,max_size = -1):
     """
     Loads MR polarity data from files, splits the data into words and generates labels.
