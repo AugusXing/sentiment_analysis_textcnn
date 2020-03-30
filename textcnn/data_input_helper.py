@@ -5,6 +5,7 @@ import word2vec
 # from collections import Counter
 # import codecs
 
+# https://nbviewer.jupyter.org/github/danielfrg/word2vec/blob/master/examples/word2vec.ipynb
 class w2v_wrapper:
      def __init__(self,file_path):
         # w2v_file = os.path.join(base_path, "vectors_poem.bin")
@@ -12,9 +13,10 @@ class w2v_wrapper:
         if 'unknown' not  in self.model.vocab_hash:
             unknown_vec = np.random.uniform(-0.1,0.1,size=128)
             self.model.vocab_hash['unknown'] = len(self.model.vocab)
+            # https://blog.csdn.net/qq_34034762/article/details/79660386
             self.model.vectors = np.row_stack((self.model.vectors,unknown_vec))
 
-
+# https://www.jianshu.com/p/8c1d1a38f9b9
 def clean_str(string):
     """
     Tokenization/string cleaning for all datasets except for SST.

@@ -5,7 +5,8 @@ import tensorflow as tf
 import numpy as np
 
 
-
+# https://www.cnblogs.com/ModifyRong/p/11319301.html
+# https://www.cnblogs.com/bymo/p/9675654.html
 class TextCNN(object):
     """
     A CNN for text classification.
@@ -34,6 +35,7 @@ class TextCNN(object):
                     initializer=w2v_model.vectors.astype(np.float32))
 
             self.embedded_chars = tf.nn.embedding_lookup(self.W, self.input_x)
+            # https://blog.csdn.net/TeFuirnever/article/details/88797810
             self.embedded_chars_expanded = tf.expand_dims(self.embedded_chars, -1)
 
         # Create a convolution + maxpool layer for each filter size
@@ -44,6 +46,7 @@ class TextCNN(object):
                 filter_shape = [filter_size, embedding_size, 1, num_filters]
                 W = tf.Variable(tf.truncated_normal(filter_shape, stddev=0.1),dtype=tf.float32, name="W")
                 b = tf.Variable(tf.constant(0.1, shape=[num_filters]),dtype=tf.float32, name="b")
+                # https://blog.csdn.net/zuolixiangfisher/article/details/80528989
                 conv = tf.nn.conv2d(
                     self.embedded_chars_expanded,
                     W,
@@ -51,8 +54,11 @@ class TextCNN(object):
                     padding="VALID",
                     name="conv")
                 # Apply nonlinearity
+                # https://www.cnblogs.com/xh_chiang/p/9132524.html
+                # https://www.cnblogs.com/smallredness/p/11197139.html
                 h = tf.nn.relu(tf.nn.bias_add(conv, b), name="relu")
                 # Maxpooling over the outputs
+                # https://blog.csdn.net/coder_xiaohui/article/details/78025379
                 pooled = tf.nn.max_pool(
                     h,
                     ksize=[1, sequence_length - filter_size + 1, 1, 1],
@@ -63,7 +69,9 @@ class TextCNN(object):
 
         # Combine all the pooled features
         num_filters_total = num_filters * len(filter_sizes)
+        # https://blog.csdn.net/leviopku/article/details/82380118
         self.h_pool = tf.concat(pooled_outputs, 3)
+        # https://www.jianshu.com/p/6bc6bd326ffd
         self.h_pool_flat = tf.reshape(self.h_pool, [-1, num_filters_total])
 
         # Add dropout
@@ -71,6 +79,7 @@ class TextCNN(object):
             self.h_drop = tf.nn.dropout(self.h_pool_flat, self.dropout_keep_prob)
 
         # Final (unnormalized) scores and predictions
+        # https://blog.csdn.net/MrR1ght/article/details/81228087
         with tf.name_scope("output"):
            W = tf.get_variable(
                         "W",
@@ -79,9 +88,11 @@ class TextCNN(object):
            b = tf.Variable(tf.constant(0.1, shape=[num_classes]), name="b")
            l2_loss += tf.nn.l2_loss(b)         
            self.scores = tf.nn.xw_plus_b(self.h_drop, W, b, name="scores")
+           # https: // blog.csdn.net / u012300744 / article / details / 81240580
            self.predictions = tf.argmax(self.scores, 1, name="predictions")
 
         # CalculateMean cross-entropy loss
+        # https://www.jianshu.com/p/648d791b55b0
         with tf.name_scope("loss"):
             losses = tf.nn.softmax_cross_entropy_with_logits(logits=self.scores, labels=self.input_y)
             self.loss = tf.reduce_mean(losses) + l2_reg_lambda * l2_loss
